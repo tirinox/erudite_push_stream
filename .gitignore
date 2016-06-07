@@ -22,3 +22,6 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+erudite_push_stream
+.idea
