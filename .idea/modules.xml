@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/erudite_push_stream.iml" filepath="$PROJECT_DIR$/erudite_push_stream.iml" />
+      <module fileurl="file://$PROJECT_DIR$/push_stream.iml" filepath="$PROJECT_DIR$/push_stream.iml" />
     </modules>
   </component>
 </project>
