@@ -2,18 +2,18 @@
 package main
 
 import (
-	"net"
-	"bufio"
 	"log"
+	"net"
 )
 
-const LISTEN_TO = ":3540"
-
 func main() {
-	log.Println("Erudite Push Steam, socket version. Listening to " + LISTEN_TO)
-	server, err := net.Listen("tcp", LISTEN_TO)
+
+	readConfiguration()
+
+	log.Println("Erudite Push Steam, socket version. Listening to " + configBind())
+	server, err := net.Listen("tcp", configBind())
 	if server == nil {
-		panic("couldn't start listening: " + err.Error())
+		panic("Couldn't start listening: " + err.Error())
 	}
 	conns := clientConns(server)
 	for {
@@ -39,15 +39,7 @@ func clientConns(listener net.Listener) chan net.Conn {
 	return ch
 }
 
-func handleConn(client net.Conn) {
-	b := bufio.NewReader(client)
-	for {
-		line, err := b.ReadBytes('\n')
-		if err != nil {
-			log.Println("Disconnecting. Error: " + err.Error())
-			break
-		}
-		log.Println("Message: " + string(line))
-		client.Write(line)
-	}
+func handleConn(connection net.Conn) {
+	client := NewClient(connection)
+	client.Listen()
 }
