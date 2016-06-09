@@ -1,45 +1,7 @@
-// main
 package main
 
-import (
-	"log"
-	"net"
-)
+import "./push"
 
 func main() {
-
-	readConfiguration()
-
-	log.Println("Erudite Push Steam, socket version. Listening to " + configBind())
-	server, err := net.Listen("tcp", configBind())
-	if server == nil {
-		panic("Couldn't start listening: " + err.Error())
-	}
-	conns := clientConns(server)
-	for {
-		go handleConn(<-conns)
-	}
-}
-
-func clientConns(listener net.Listener) chan net.Conn {
-	ch := make(chan net.Conn)
-	i := 0
-	go func() {
-		for {
-			client, err := listener.Accept()
-			if client == nil {
-				log.Println("Couldn't accept: " + err.Error())
-				continue
-			}
-			i++
-			log.Printf("Accepted #%d: %v <-> %v\n", i, client.LocalAddr(), client.RemoteAddr())
-			ch <- client
-		}
-	}()
-	return ch
-}
-
-func handleConn(connection net.Conn) {
-	client := NewClient(connection)
-	client.Listen()
+	push.RunPushApp()
 }

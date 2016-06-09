@@ -1,4 +1,4 @@
-package main
+package push
 
 import (
 	"bufio"
@@ -19,7 +19,7 @@ func NewClient(connection net.Conn) *Client {
 	reader := bufio.NewReader(connection)
 
 	client := &Client{
-		connection: connection,
+		connection: &connection,
 		reader:     reader,
 		writer:     writer,
 	}
