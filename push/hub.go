@@ -37,7 +37,7 @@ func (h *Hub) unregisterClient(c *Client) {
 func (h *Hub) sendMessage(m *PushMessage) {
 	if clients, ok := h.clients[m.receiverId]; ok && len(clients) > 0 {
 		for client := range clients {
-			client.send <- m.message
+			client.send <- m
 		}
 	} else {
 		// respond: no receiver!

@@ -3,7 +3,6 @@ package push
 import (
 	"log"
 	"net"
-	"github.com/Jeffail/gabs"
 )
 
 var g_hub = NewHub()
@@ -13,7 +12,7 @@ type IncomingConnection struct {
 	ident int
 }
 
-type MessageContent *gabs.Container
+type MessageContent string
 
 type PushMessage struct {
 	receiverId string
