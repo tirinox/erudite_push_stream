@@ -4,7 +4,6 @@
     <list default="true" id="50e8d9c1-4c73-4438-938a-8624deb6cdc9" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/push/client.go" afterPath="$PROJECT_DIR$/push/client.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/push/configuration.go" afterPath="$PROJECT_DIR$/push/configuration.go" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/push/hub.go" afterPath="$PROJECT_DIR$/push/hub.go" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/push/push.go" afterPath="$PROJECT_DIR$/push/push.go" />
     </list>
@@ -28,33 +27,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="hub.go" pinned="false" current-in-tab="false">
+      <file leaf-file-name="hub.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/push/hub.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-185">
-              <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-              <folding>
-                <element signature="e#14#46#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="client.go" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/push/client.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="26" column="22" selection-start-line="26" selection-start-column="22" selection-end-line="26" selection-end-column="22" />
+            <state relative-caret-position="-289">
+              <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="configuration.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/push/configuration.go">
+      <file leaf-file-name="client.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/push/client.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+            <state relative-caret-position="-150">
+              <caret line="135" column="0" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -63,10 +50,10 @@
       <file leaf-file-name="push.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/push/push.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="9" column="19" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
+            <state relative-caret-position="311">
+              <caret line="50" column="23" selection-start-line="50" selection-start-column="23" selection-end-line="50" selection-end-column="23" />
               <folding>
-                <element signature="e#14#38#0" expanded="true" />
+                <element signature="e#14#65#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -98,8 +85,8 @@
         <option value="$PROJECT_DIR$/client.go" />
         <option value="$PROJECT_DIR$/main.go" />
         <option value="$PROJECT_DIR$/push/configuration.go" />
-        <option value="$PROJECT_DIR$/push/push.go" />
         <option value="$PROJECT_DIR$/push/hub.go" />
+        <option value="$PROJECT_DIR$/push/push.go" />
         <option value="$PROJECT_DIR$/push/client.go" />
       </list>
     </option>
@@ -238,6 +225,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/main.go" />
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="go.libraries.notification.had.been.shown" value="true" />
+    <property name="GO_FMT" value="false" />
   </component>
   <component name="RunManager" selected="Go Application.Build main.go and run">
     <configuration default="false" name="go run main.go" type="GoRunFileConfiguration" factoryName="Go Single File" singleton="true" temporary="true">
@@ -544,6 +532,14 @@
       <option name="presentableId" value="Default" />
       <updated>1465279921474</updated>
     </task>
+    <task id="LOCAL-00001" summary="hub, push, client">
+      <created>1465631464537</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1465631464538</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -587,6 +583,10 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="hub, push, client" />
+    <option name="LAST_COMMIT_MESSAGE" value="hub, push, client" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
     <watches-manager />
@@ -600,9 +600,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
           <caret line="13" column="27" selection-start-line="13" selection-start-column="27" selection-end-line="13" selection-end-column="27" />
-          <folding>
-            <element signature="e#14#46#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -627,7 +625,7 @@
         <state relative-caret-position="90">
           <caret line="9" column="19" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
           <folding>
-            <element signature="e#14#38#0" expanded="true" />
+            <element signature="e#14#65#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -636,9 +634,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#14#46#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -754,30 +750,36 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/push/push.go">
+    <entry file="file:///usr/local/Cellar/go/1.6.2/libexec/src/net/dial.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="9" column="19" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
-          <folding>
-            <element signature="e#14#38#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="193">
+          <caret line="396" column="5" selection-start-line="396" selection-start-column="5" selection-end-line="396" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/push/hub.go">
+    <entry file="file://$PROJECT_DIR$/push/push.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-185">
-          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+        <state relative-caret-position="311">
+          <caret line="50" column="23" selection-start-line="50" selection-start-column="23" selection-end-line="50" selection-end-column="23" />
           <folding>
-            <element signature="e#14#46#0" expanded="true" />
+            <element signature="e#14#65#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/push/client.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="26" column="22" selection-start-line="26" selection-start-column="22" selection-end-line="26" selection-end-column="22" />
+        <state relative-caret-position="-150">
+          <caret line="135" column="0" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/push/hub.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-289">
+          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
           <folding />
         </state>
       </provider>

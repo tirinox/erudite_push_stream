@@ -10,47 +10,48 @@ import (
 	"github.com/Jeffail/gabs"
 )
 
-const pingPeriod = 20 * time.Second
+const (
+	pingPeriod     = 30 * time.Second
+	timeToRegister = 20 * time.Second
+)
 
 const (
-	ERROR_UNKNOWN_COMMAND = 4
-	ERROR_JSON_PARSE = 1
-	ERROR_NO_COMMAND = 2
-	ERROR_COMMAND_MUST_BE_STRING = 3
+	ERROR_JSON_PARSE      = 1
+	ERROR_NO_COMMAND      = 2
+	ERROR_UNKNOWN_COMMAND = 3
+	ERROR_NO_IDENT        = 4
 )
 
 type Client struct {
 	reader      *bufio.Reader
 	writer      *bufio.Writer
-	connection  *net.Conn
+	connection  net.Conn
 	isPublisher bool
-	id          string
+	clientId    string
 	send        chan MessageContent
+	connId      int
 }
 
-func NewClient(connection net.Conn) *Client {
-	writer := bufio.NewWriter(connection)
-	reader := bufio.NewReader(connection)
+func NewClient(connection IncomingConnection) *Client {
+	writer := bufio.NewWriter(connection.conn)
+	reader := bufio.NewReader(connection.conn)
 
 	client := &Client{
-		connection:  &connection,
+		connection:  connection.conn,
 		reader:      reader,
 		writer:      writer,
 		isPublisher: false,
-		id:          "",
+		clientId:    "",
 		send:        make(chan MessageContent),
+		connId:      connection.ident,
 	}
 	return client
 }
 
-func (client *Client) Write(s string) {
-	client.writer.WriteString(s + "\n")
-	client.writer.Flush()
-}
-
-func (client *Client) WriteJSON(j *gabs.Container) {
-	client.writer.WriteString(j.String())
-	client.writer.Flush()
+func (c *Client) WriteJSON(j *gabs.Container) {
+	log.Println("#", c.connId, " writing JSON. ", j.String())
+	c.writer.WriteString(j.String() + "\n")
+	c.writer.Flush()
 }
 
 func errorJSON(code int, message string) *gabs.Container {
@@ -68,71 +69,127 @@ func goodJSON(command string) *gabs.Container {
 	return j
 }
 
-func (client *Client) parseCommand(command string, j *gabs.Container) {
+func (c *Client) close() {
+	log.Println("#", c.connId, " close()")
+	close(c.send)
+}
+
+func (c *Client) parseCommand(command string, j *gabs.Container) {
 	switch command {
 	case "register":
-		client.WriteJSON(goodJSON(command))
+		if j.Exists("ident") {
+			if ident, ok := j.Path("ident").Data().(string); ok {
+				identLen := len(ident)
+				if identLen > 1 && identLen < 256 {
+					c.clientId = ident
+					g_hub.register <- c
+				} else {
+					c.WriteJSON(errorJSON(ERROR_NO_IDENT, "ident has inappropriate length"))
+				}
+			} else {
+				c.WriteJSON(errorJSON(ERROR_NO_IDENT, "ident must be a string"))
+			}
+		} else {
+			c.WriteJSON(errorJSON(ERROR_NO_IDENT, "there must be \"ident\" field"))
+		}
+
 		break
 	case "publish":
-		client.WriteJSON(goodJSON(command))
+		c.WriteJSON(goodJSON(command))
 		break
 	default:
-		client.WriteJSON(errorJSON(ERROR_UNKNOWN_COMMAND, "unknown command: "+command))
+		c.WriteJSON(errorJSON(ERROR_UNKNOWN_COMMAND, "unknown command: "+command))
 	}
 }
 
-func (client *Client) sendPing() {
+func (c *Client) sendPing() {
+	log.Println("#", c.connId, " sending ping")
 	j := gabs.New()
 	j.Set("ping", "type")
-	client.WriteJSON(j)
+	c.WriteJSON(j)
 }
 
-func (client *Client) readPump() {
+func (c *Client) registerTimeout() {
+	time.AfterFunc(timeToRegister, func() {
+		if c.clientId == "" {
+			log.Println("#", c.connId, " I am closing the connection. You didn't manage to register in time. Too late!")
+			c.connection.Close()
+		} else {
+			log.Println("#", c.connId, " Register timeout does nothing. You are registered.")
+		}
+	})
+}
+
+func (c *Client) readPump() {
+
+	log.Println("#", c.connId, " readPump() start")
+	defer func() { log.Println("#", c.connId, " readPump() end") }()
+
+	c.registerTimeout()
+
 	for {
-		line, err := client.reader.ReadBytes('\n')
+		line, err := c.reader.ReadBytes('\n')
 		if err != nil {
-			log.Println("Disconnecting. Reason: " + err.Error())
+			log.Println("#", c.connId, " Disconnecting. Reason: " + err.Error())
 			break
 		}
+
+		log.Println("#", c.connId, " received message ", line)
 
 		jsonResult, err := gabs.ParseJSON(line)
 		if err == nil {
 			if jsonResult.Exists("command") {
 				if command, ok := jsonResult.Path("command").Data().(string); ok {
-					client.parseCommand(command, jsonResult)
+					c.parseCommand(command, jsonResult)
 				} else {
-					client.WriteJSON(errorJSON(ERROR_COMMAND_MUST_BE_STRING, "command must be a string"))
+					c.WriteJSON(errorJSON(ERROR_NO_COMMAND, "command must be a string"))
 				}
 			} else {
-				client.WriteJSON(errorJSON(ERROR_NO_COMMAND, "no command"))
+				c.WriteJSON(errorJSON(ERROR_NO_COMMAND, "there must be \"command\" field"))
 			}
 		} else {
-			client.WriteJSON(errorJSON(ERROR_JSON_PARSE, "JSON parse error"))
+			c.WriteJSON(errorJSON(ERROR_JSON_PARSE, "JSON parse error"))
 		}
 	}
 }
 
-func (client *Client) writePump() {
+func (c *Client) writePump() {
+	log.Println("#", c.connId, " writePump() start")
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
+		log.Println("#", c.connId, " ping stop")
 		ticker.Stop()
+
+		log.Println("#", c.connId, " writePump() end")
 	}()
 
 	for {
 		select {
-		case message := <-client.send:
-			client.WriteJSON(message)
+		case message, ok := <-c.send:
+			if !ok {
+				log.Println("#", c.connId, " unable to read a message; the send channel was closed")
+				return
+			}
+			c.WriteJSON(message)
+			n := len(c.send)
+			for i := 0; i < n; i++ {
+				c.WriteJSON(message)
+			}
 
 		case <-ticker.C:
-			client.sendPing()
+			c.sendPing()
 		}
 	}
 }
 
-func (client *Client) Listen() {
-	go client.writePump()
-	client.readPump()
+func (c *Client) Listen() {
+
 	defer func() {
-		g_hub.unregister <- client
+		log.Println("#", c.connId, " Listen() closing")
+		c.close()
+		g_hub.unregister <- c
 	}()
+
+	go c.writePump()
+	c.readPump()
 }

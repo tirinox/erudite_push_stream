@@ -3,9 +3,23 @@ package push
 import (
 	"log"
 	"net"
+	"github.com/Jeffail/gabs"
 )
 
 var g_hub = NewHub()
+
+type IncomingConnection struct {
+	conn  net.Conn
+	ident int
+}
+
+type MessageContent *gabs.Container
+
+type PushMessage struct {
+	receiverId string
+	message    MessageContent
+	sender     *Client
+}
 
 func RunPushApp() {
 	readConfiguration()
@@ -21,8 +35,8 @@ func RunPushApp() {
 	}
 }
 
-func clientConns(listener net.Listener) chan net.Conn {
-	ch := make(chan net.Conn)
+func clientConns(listener net.Listener) chan IncomingConnection {
+	ch := make(chan IncomingConnection)
 	i := 0
 	go func() {
 		for {
@@ -33,13 +47,16 @@ func clientConns(listener net.Listener) chan net.Conn {
 			}
 			i++
 			log.Printf("Accepted #%d: %v <-> %v\n", i, client.LocalAddr(), client.RemoteAddr())
-			ch <- client
+			ch <- IncomingConnection{
+				conn:  client,
+				ident: i,
+			}
 		}
 	}()
 	return ch
 }
 
-func handleConn(connection net.Conn) {
+func handleConn(connection IncomingConnection) {
 	client := NewClient(connection)
 	client.Listen()
 }

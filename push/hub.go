@@ -1,16 +1,6 @@
 package push
 
-import "github.com/Jeffail/gabs"
-
 type ClientArray map[*Client]bool
-
-type MessageContent *gabs.Container
-
-type PushMessage struct {
-	receiverId string
-	message    MessageContent
-	sender     *Client
-}
 
 type Hub struct {
 	register   chan *Client
@@ -29,18 +19,18 @@ func NewHub() *Hub {
 }
 
 func (h *Hub) registerClient(c *Client) {
-	if arr, ok := h.clients[c.id]; ok {
+	if arr, ok := h.clients[c.clientId]; ok {
 		arr[c] = true
 	} else {
 		arr := make(map[*Client]bool)
 		arr[c] = true
-		h.clients[c.id] = arr
+		h.clients[c.clientId] = arr
 	}
 }
 
 func (h *Hub) unregisterClient(c *Client) {
-	if _, ok := h.clients[c.id]; ok {
-		delete(h.clients[c.id], c)
+	if _, ok := h.clients[c.clientId]; ok {
+		delete(h.clients[c.clientId], c)
 	}
 }
 
