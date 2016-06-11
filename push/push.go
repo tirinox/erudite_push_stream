@@ -5,14 +5,16 @@ import (
 	"net"
 )
 
+var g_hub = NewHub()
+
 func RunPushApp() {
 	readConfiguration()
-
-	log.Println("Erudite Push Steam, socket version. Listening to " + configBind())
-	server, err := net.Listen("tcp", configBind())
+	log.Println("Erudite Push Steam, socket version. Listening to " + g_bind)
+	server, err := net.Listen("tcp", g_bind)
 	if server == nil {
 		panic("Couldn't start listening: " + err.Error())
 	}
+	g_hub.Run()
 	conns := clientConns(server)
 	for {
 		go handleConn(<-conns)
@@ -41,4 +43,3 @@ func handleConn(connection net.Conn) {
 	client := NewClient(connection)
 	client.Listen()
 }
-

@@ -13,11 +13,3 @@ func readConfiguration() {
 
 	g_apiKey = os.Getenv("API_KEY")
 }
-
-func configBind() string {
-	return g_bind
-}
-
-func configApiKey() string {
-	return g_apiKey
-}
