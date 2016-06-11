@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Jeffail/gabs"
+	"strings"
 )
 
 const (
@@ -18,6 +19,7 @@ const (
 const (
 	IDENT_LIMIT   = 256
 	MESSAGE_LIMIT = 1024 * 64
+	APIKEY_LIMIT  = 256
 )
 const (
 	ERROR_JSON_PARSE      = 1
@@ -25,6 +27,8 @@ const (
 	ERROR_UNKNOWN_COMMAND = 3
 	ERROR_NO_IDENT        = 4
 	ERROR_NO_MESSAGE      = 5
+	ERROR_NO_API_KEY      = 6
+	ERROR_WRONG_API_KEY   = 7
 )
 
 type Client struct {
@@ -118,11 +122,17 @@ func (c *Client) registerCommand(j *gabs.Container) {
 func (c *Client) publishCommand(j *gabs.Container) {
 	if ident, ok := c.readIdent(j); ok {
 		if message, ok := c.readString(j, "message", MESSAGE_LIMIT, ERROR_NO_MESSAGE); ok {
-			g_hub.sendMessage(&PushMessage{
-				receiverId: ident,
-				message:    MessageContent(message),
-				sender:     c,
-			})
+			if apiKey, ok := c.readString(j, "api_key", APIKEY_LIMIT, ERROR_NO_API_KEY); ok {
+				if apiKey != g_apiKey {
+					c.WriteJSON(errorJSON(ERROR_WRONG_API_KEY, "\"api_key\" mismatch"))
+				} else {
+					g_hub.sendMessage(&PushMessage{
+						receiverId: ident,
+						message:    MessageContent(message),
+						sender:     c,
+					})
+				}
+			}
 		}
 	}
 }
@@ -172,21 +182,25 @@ func (c *Client) readPump() {
 			break
 		}
 
-		log.Println("#", c.connId, " received message ", string(line))
+		strLine := strings.TrimSpace(string(line))
 
-		jsonResult, err := gabs.ParseJSON(line)
-		if err == nil {
-			if jsonResult.Exists("command") {
-				if command, ok := jsonResult.Path("command").Data().(string); ok {
-					c.parseCommand(command, jsonResult)
+		if len(strLine) > 0 {
+			log.Println("#", c.connId, " received message ", strLine)
+
+			jsonResult, err := gabs.ParseJSON([]byte(line))
+			if err == nil {
+				if jsonResult.Exists("command") {
+					if command, ok := jsonResult.Path("command").Data().(string); ok {
+						c.parseCommand(command, jsonResult)
+					} else {
+						c.WriteJSON(errorJSON(ERROR_NO_COMMAND, "command must be a string"))
+					}
 				} else {
-					c.WriteJSON(errorJSON(ERROR_NO_COMMAND, "command must be a string"))
+					c.WriteJSON(errorJSON(ERROR_NO_COMMAND, "there must be \"command\" field"))
 				}
 			} else {
-				c.WriteJSON(errorJSON(ERROR_NO_COMMAND, "there must be \"command\" field"))
+				c.WriteJSON(errorJSON(ERROR_JSON_PARSE, "JSON parse error"))
 			}
-		} else {
-			c.WriteJSON(errorJSON(ERROR_JSON_PARSE, "JSON parse error"))
 		}
 	}
 }
