@@ -1,4 +1,4 @@
-package push
+package main
 
 import "os"
 
@@ -13,5 +13,5 @@ func readConfiguration() {
 
 	g_apiKey = os.Getenv("API_KEY")
 
-	g_apiKey = "test"
+	//	g_apiKey = "test"
 }

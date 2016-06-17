@@ -1,4 +1,4 @@
-package push
+package main
 
 import (
 	"bufio"
@@ -7,8 +7,9 @@ import (
 
 	"time"
 
-	"github.com/Jeffail/gabs"
 	"strings"
+
+	"github.com/Jeffail/gabs"
 )
 
 const (

@@ -1,4 +1,4 @@
-package push
+package main
 
 type ClientArray map[*Client]bool
 
