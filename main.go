@@ -1,6 +1,7 @@
 package main
 
 func main() {
-	// log.SetOutput(ioutil.Discard) // if you want to turn logging off
+	// if you want to turn logging off
+	// log.SetOutput(ioutil.Discard)
 	RunPushApp()
 }

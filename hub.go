@@ -35,13 +35,14 @@ func (h *Hub) unregisterClient(c *Client) {
 }
 
 func (h *Hub) sendMessage(m *PushMessage) {
+	sent := false
 	if clients, ok := h.clients[m.receiverId]; ok && len(clients) > 0 {
 		for client := range clients {
 			client.send <- m
 		}
-	} else {
-		// respond: no receiver!
+		sent = true
 	}
+	m.sender.WritePublishResult(sent, m.receiverId)
 }
 
 func (h *Hub) Run() {

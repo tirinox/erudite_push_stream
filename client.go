@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/Jeffail/gabs"
+	"strconv"
 )
 
 const (
@@ -68,6 +69,13 @@ func (c *Client) WriteJSON(j *gabs.Container) {
 	log.Println("#", c.connId, " writing JSON. ", j.String())
 	c.writer.WriteString(j.String() + "\n")
 	c.writer.Flush()
+}
+
+func (c *Client) WritePublishResult(ok bool, ident string) {
+	j := gabs.New()
+	j.Set(strconv.FormatBool(ok), "result")
+	j.Set(ident, "ident")
+	c.WriteJSON(j)
 }
 
 func errorJSON(code int, message string) *gabs.Container {
