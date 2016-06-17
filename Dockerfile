@@ -1,3 +1,4 @@
 FROM golang:onbuild
 MAINTAINER Maksim Koltsov
 EXPOSE 10026
+ENV API_KEY b14bf19bf0e48177eb2e 
