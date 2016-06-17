@@ -154,6 +154,9 @@ func (c *Client) parseCommand(command string, j *gabs.Container) {
 	case "publish":
 		c.publishCommand(j)
 		break
+	case "pong":
+		// do nothing
+		break
 	default:
 		c.WriteJSON(errorJSON(ERROR_UNKNOWN_COMMAND, "unknown command: "+command))
 	}
