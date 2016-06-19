@@ -43,6 +43,7 @@ func (h *Hub) sendMessage(m *PushMessage) {
 		sent = true
 	}
 	m.sender.WritePublishResult(sent, m.receiverId)
+	m.sender.close()
 }
 
 func (h *Hub) Run() {
