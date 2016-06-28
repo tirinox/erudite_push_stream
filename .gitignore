@@ -25,4 +25,4 @@ _testmain.go
 
 erudite_push_stream
 .idea
-.idea/*
+.idea/workspace.xml

@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	PING_PERIOD      = 30 * time.Second
+	PING_PERIOD      = 5 * time.Second
 	TIME_TO_REGISTER = 20 * time.Second
 )
 
