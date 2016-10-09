@@ -250,6 +250,7 @@ func (c *Client) writePump() {
 			if secondsSinceActivity > PING_PERIOD {
 				log.Println("#", c.connId, " closing inactive connection.")
 				c.connection.Close()
+				return
 			}
 
 			c.sendPing()
