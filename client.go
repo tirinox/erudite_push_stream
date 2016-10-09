@@ -40,6 +40,7 @@ type Client struct {
 	clientId   string
 	send       chan *PushMessage
 	connId     int
+	lastActivity int64
 }
 
 func NewClient(connection IncomingConnection) *Client {
@@ -53,6 +54,7 @@ func NewClient(connection IncomingConnection) *Client {
 		clientId:   "",
 		send:       make(chan *PushMessage),
 		connId:     connection.ident,
+		lastActivity: time.Now().Unix(),
 	}
 	return client
 }
@@ -147,6 +149,7 @@ func (c *Client) publishCommand(j *gabs.Container) {
 }
 
 func (c *Client) parseCommand(command string, j *gabs.Container) {
+	c.lastActivity = time.Now().Unix()
 	switch command {
 	case "register":
 		c.registerCommand(j)
@@ -241,6 +244,13 @@ func (c *Client) writePump() {
 			}
 
 		case <-ticker.C:
+
+			secondsSinceActivity := time.Duration(time.Now().Unix() - c.lastActivity) * time.Second
+			if secondsSinceActivity > PING_PERIOD {
+				log.Println("#", c.connId, " closing inactive connection.")
+				c.connection.Close()
+			}
+
 			c.sendPing()
 		}
 	}
