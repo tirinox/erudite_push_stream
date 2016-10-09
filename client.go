@@ -149,7 +149,6 @@ func (c *Client) publishCommand(j *gabs.Container) {
 }
 
 func (c *Client) parseCommand(command string, j *gabs.Container) {
-	c.lastActivity = time.Now().Unix()
 	switch command {
 	case "register":
 		c.registerCommand(j)
@@ -196,6 +195,8 @@ func (c *Client) readPump() {
 			log.Println("#", c.connId, " Disconnecting. Reason: "+err.Error())
 			break
 		}
+
+		c.lastActivity = time.Now().Unix()
 
 		strLine := strings.TrimSpace(string(line))
 
