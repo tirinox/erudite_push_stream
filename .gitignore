@@ -27,3 +27,6 @@ erudite_push_stream
 .idea
 .idea/workspace.xml
 .idea/*
+
+# environments files
+*.env

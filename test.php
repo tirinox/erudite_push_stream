@@ -6,7 +6,7 @@ error_reporting(E_ALL);
    } else {
         $m = json_encode([
             'command' => 'publish',
-            'api_key' => 'b14bf19bf0e48177eb2e',
+            'api_key' => 'testKEY123',
             'ident' => 'erudite_123',
             'message' => 'Hello world! 123'
         ]);
