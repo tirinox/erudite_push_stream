@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
-if [ -f ./config.env ]; then
+if [ -f "./config.env" ]; then
     echo "Reading config.env file"
-    source ./config.env
+    source "./config.env"
 fi
 
 docker stop erps_instance
