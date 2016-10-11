@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	PING_PERIOD      = 5 * time.Second
+	PING_PERIOD      = 10 * time.Second
 	TIME_TO_REGISTER = 20 * time.Second
 )
 
@@ -104,7 +104,7 @@ func (c *Client) readString(j *gabs.Container, path string, lenLimit, errNo int)
 	if j.ExistsP(path) {
 		if item, ok := j.Path(path).Data().(string); ok {
 			itemLen := len(item)
-			if itemLen > 1 && itemLen < lenLimit {
+			if itemLen < lenLimit {
 				return item, true
 			} else {
 				c.WriteJSON(errorJSON(errNo, path+" has inappropriate length"))

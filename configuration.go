@@ -12,6 +12,4 @@ func readConfiguration() {
 	}
 
 	g_apiKey = os.Getenv("API_KEY")
-
-	//	g_apiKey = "test"
 }
