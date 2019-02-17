@@ -6,7 +6,7 @@ Works via *TCP* sockets, not WebSockets.
 
 Includes Docker's image.
 
-###Configuration
+### Configuration
 
 The app is configured through environment variables:
 
@@ -16,7 +16,7 @@ The app is configured through environment variables:
 
 `API_KEY=you_api_key` - for protecting the app from unauthorized message publishers (default is an empty string).
 
-###Commands
+### Commands
 
 You can connect to the app running locally using the following command:
 `telnet localhost 10026`
